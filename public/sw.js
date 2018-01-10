@@ -28,7 +28,16 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(cachedAsset => {
         if (cachedAsset) return cachedAsset;
-        else return fetch(event.request);
+        else {
+          return fetch(event.request)
+            .then(res => {
+              return caches.open('dynamic')
+                .then(cache => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+            });
+        }
       })
   );
 });
