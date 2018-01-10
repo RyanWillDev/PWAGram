@@ -23,6 +23,16 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keyList => {
+        return Promise.all(
+          keyList.map(key => {
+            if (key !== CURRENT_STATIC_KEY && key !== CURRENT_DYNAMIC_KEY) return caches.delete(key);
+          })
+        );
+      })
+  )
   return self.clients.claim();
 });
 
