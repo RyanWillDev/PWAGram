@@ -1,7 +1,10 @@
+var CURRENT_STATIC_KEY = 'static-v1',
+    CURRENT_DYNAMIC_KEY = 'dynamic-v1';
+
 self.addEventListener('install', event => {
  event.waitUntil(
    // Precache the app shell
-   caches.open('static')
+   caches.open(CURRENT_STATIC_KEY)
     .then(cache => {
       cache.addAll([
         '/',
@@ -31,7 +34,7 @@ self.addEventListener('fetch', event => {
         else {
           return fetch(event.request)
             .then(res => {
-              return caches.open('dynamic')
+              return caches.open(CURRENT_DYNAMIC_KEY)
                 .then(cache => {
                   cache.put(event.request.url, res.clone());
                   return res;
