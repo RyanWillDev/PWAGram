@@ -53,10 +53,24 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-fetch('https://httpbin.org/get')
+var url = 'https://httpbin.org/get';
+var networkDataRec = false;
+
+fetch(url)
   .then(function(res) {
     return res.json();
   })
   .then(function(data) {
+    console.log('from network');
+    networkDataRec = true;
     createCard();
   });
+
+if (window.caches) {
+  caches.match(url)
+    .then(res => res ? res.json() : null)
+    .then(json => {
+      console.log('from cache');
+      networkDataRec || createCard()
+    })
+}
